@@ -82,7 +82,7 @@ resource "helm_release" "dictycontent-postgres" {
   namespace = "dictybase"
 
   values = [
-    "${file("${var.config_path}/dictycontent-postgres/${var.env}.yaml")}"
+    "${var.config_path}/dictycontent-postgres/${var.env}.yaml"
   ]
 }
 
@@ -134,7 +134,7 @@ resource "helm_release" "dicty-issuer-certificate" {
   namespace = "dictybase"
 
   values = [
-    "${file("${var.config_path}/dicty-issuer-certificate/${var.env}.yaml")}"
+    "${var.config_path}/dicty-issuer-certificate/${var.env}.yaml"
   ]
 }
 
@@ -144,7 +144,7 @@ resource "helm_release" "dictybase-auth-ingress" {
   namespace = "dictybase"
 
   values = [
-    "${file("${var.config_path}/dictybase-auth-ingress/${var.env}.yaml")}"
+    "${var.config_path}/dictybase-auth-ingress/${var.env}.yaml"
   ]
 }
 
@@ -154,7 +154,7 @@ resource "helm_release" "dictybase-ingress" {
   namespace = "dictybase"
 
   values = [
-    "${file("${var.config_path}/dictybase-ingress/${var.env}.yaml")}"
+    "${var.config_path}/dictybase-ingress/${var.env}.yaml"
   ]
 }
 
@@ -198,7 +198,7 @@ resource "helm_release" "arango-create-database" {
   namespace = "dictybase"
 
   values = [
-    "${file("${var.config_path}/arango-create-database/${var.env}.yaml")}"
+    "${var.config_path}/arango-create-database/${var.env}.yaml"
   ]
 }
 
