@@ -72,10 +72,7 @@ resource "helm_release" "kubeless" {
   }
 }
 
-## -- redis
-resource "helm_release" "redis" {
-  name = "redis"
-  chart = "stable/redis"
+]
   namespace = "dictybase"
   version =  "${var.redis_version}"
 }

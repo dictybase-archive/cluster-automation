@@ -79,6 +79,10 @@ variable  "arangodb_storage_size" {
   default = "50Gi"
 }
 
+variable "kubeless_version" {
+  default = "2.0.6"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
