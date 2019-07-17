@@ -44,6 +44,7 @@ resource "kubernetes_storage_class" "fast" {
   }
 }
 
+## -- nats charts
 resource "helm_release" "nats-operator" {
   name = "nats-operator"
   chart = "dictybase/nats-operator"
@@ -69,6 +70,7 @@ resource "helm_release" "kubeless" {
   }
 }
 
+## -- redis
 resource "helm_release" "redis" {
   name = "redis"
   chart = "stable/redis"
@@ -76,6 +78,7 @@ resource "helm_release" "redis" {
   namespace = "dictybase"
 }
 
+## - postgres
 resource "helm_release" "dictycontent-postgres" {
   name = "dictycontent-postgres"
   chart = "dictybase/dictycontent-postgres"
@@ -86,6 +89,7 @@ resource "helm_release" "dictycontent-postgres" {
   ]
 }
 
+## -- postgres schema loaders
 resource "helm_release" "dictycontent-schema" {
   name = "dictycontent-schema"
   chart = "dictybase/dictycontent-schema"
@@ -128,6 +132,7 @@ resource "helm_release" "cert_manager" {
   namespace = "cert-manager"
 }
 
+## -- dictybase issuer and certificate
 resource "helm_release" "dicty-issuer-certificate" {
   name = "dicty-issuer-certificate"
   chart = "dictybase/issuer-certificate"
@@ -138,6 +143,7 @@ resource "helm_release" "dicty-issuer-certificate" {
   ]
 }
 
+## -- dictybase ingress charts
 resource "helm_release" "dictybase-auth-ingress" {
   name = "dictybase-auth-ingress"
   chart = "dictybase/auth-ingress"
@@ -160,6 +166,7 @@ resource "helm_release" "dictybase-ingress" {
 
 ## minio goes here
 
+## -- arangodb charts
 resource "helm_release" "kube-arangodb-crd" {
   name = "kube-arangodb-crd"
   chart = "https://github.com/arangodb/kube-arangodb/releases/download/0.3.11/kube-arangodb-crd.tgz"
@@ -201,6 +208,68 @@ resource "helm_release" "arango-create-database" {
     "${var.config_path}/arango-create-database/${var.env}.yaml"
   ]
 }
+
+## argo goes here
+
+## api services
+resource "helm_release" "content-api-server" {
+  name = "content-api-server"
+  chart = "dictybase/content-api-server"
+  namespace = "dictybase"
+}
+
+resource "helm_release" "user-api-server" {
+  name = "user-api-server"
+  chart = "dictybase/user-api-server"
+  namespace = "dictybase"
+}
+
+resource "helm_release" "identity-api-server" {
+  name = "identity-api-server"
+  chart = "dictybase/identity-api-server"
+  namespace = "dictybase"
+
+  set {
+    name = "image.tag"
+    value = "0.6.0"
+  }
+
+  values = [
+    "${var.config_path}/identity-api-server/${var.env}.yaml"
+  ]
+}
+
+resource "helm_release" "order-api-server" {
+  name = "order-api-server"
+  chart = "dictybase/order-api-server"
+  namespace = "dictybase"
+
+  values = [
+    "${var.config_path}/order-api-server/${var.env}.yaml"
+  ]
+}
+
+resource "helm_release" "stock-api-server" {
+  name = "stock-api-server"
+  chart = "dictybase/stock-api-server"
+  namespace = "dictybase"
+
+  values = [
+    "${var.config_path}/stock-api-server/${var.env}.yaml"
+  ]
+}
+
+## need modware-annotation
+
+## need authserver
+
+## then graphql server
+
+## data loaders go here
+
+## install kubeless functions here
+
+## install frontend web apps here
 
 ## -- create config folder tree and stub values files
 resource "null_resource" "tree_value_files" {
