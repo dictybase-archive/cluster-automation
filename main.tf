@@ -190,11 +190,3 @@ resource "helm_release" "arango-create-database" {
     "${file("arango-create-database.yaml")}"
   ]    
 }
-
-## -- create config folder tree and stub values files
-resource "null_resource" "tree_value_files" {
-  provisioner "local-exec" {
-    command = "mkdir -p ${join(" ", ${formatlist("%s/%s", ${var.config_path}, ${var.apps})})}"
-    interpreter = "/bin/bash -c"
-  }
-}

@@ -20,12 +20,9 @@ variable "apps" {
 }
 
 
-variable "env_value_files" {
-
 variable "env" {}
 
 variable "env_value_files"  {
-
   default = ["dev.yaml", "staging.yaml", "prod.yaml"]
 }
 
