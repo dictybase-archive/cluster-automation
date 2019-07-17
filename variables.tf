@@ -7,6 +7,10 @@ variable "nginx_ingress_version" {
   default = "1.6.8"
 }
 
+variable "redis_version" {
+  default = "3.7.3"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
@@ -15,9 +19,13 @@ variable "apps" {
   default = ["minio", "redis"]
 }
 
+
+variable "env_value_files" {
+
 variable "env" {}
 
 variable "env_value_files"  {
+
   default = ["dev.yaml", "staging.yaml", "prod.yaml"]
 }
 

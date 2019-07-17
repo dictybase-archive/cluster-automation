@@ -15,6 +15,23 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
   }
 }
 
+## -- nats clusterrolebinding
+resource "kubernetes_cluster_role_binding" "nats" {
+  metadata {
+    name = "default"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "default"
+    namespace = "dictybase"
+  }
+}
+
 ## -- ssd based storage class
 resource "kubernetes_storage_class" "fast" {
   metadata {
@@ -25,6 +42,49 @@ resource "kubernetes_storage_class" "fast" {
     type = "pd-standard"
     zone = "us-central1-a"
   }
+}
+
+resource "helm_release" "nats-operator" {
+  name = "nats-operator"
+  chart = "dictybase/nats-operator"
+  namespace = "dictybase"
+}
+
+resource "helm_release" "nats" {
+  name = "nats"
+  chart = "dictybase/nats"
+  namespace = "dictybase"
+}
+
+## -- need to install kubeless here
+
+resource "helm_release" "redis" {
+  name = "redis"
+  chart = "stable/redis"
+  version =  "${var.redis_version}"
+  namespace = "dictybase"
+}
+
+resource "helm_release" "dictycontent-postgres" {
+  name = "dictycontent-postgres"
+  chart = "dictybase/dictycontent-postgres"
+  namespace = "dictybase"
+
+  values = [
+    "${file("dictycontent-postgres.yaml")}"
+  ]
+}
+
+resource "helm_release" "dictycontent-schema" {
+  name = "dictycontent-schema"
+  chart = "dictybase/dictycontent-schema"
+  namespace = "dictybase"
+}
+
+resource "helm_release" "dictyuser-schema" {
+  name = "dictyuser-schema"
+  chart = "dictybase/dictyuser-schema"
+  namespace = "dictybase"
 }
 
 ## -- nginx ingress controller
@@ -55,6 +115,80 @@ resource "helm_release" "cert_manager" {
   chart = "jetstack/cert-manager"
   version =  "${var.cert_manager_version}"
   namespace = "cert-manager"
+}
+
+resource "helm_release" "dicty-issuer-certificate" {
+  name = "dicty-issuer-certificate"
+  chart = "dictybase/issuer-certificate"
+  namespace = "dictybase"
+
+  values = [
+    "${file("dicty-issuer-certificate.yaml")}"
+  ]  
+}
+
+resource "helm_release" "dictybase-auth-ingress" {
+  name = "dictybase-auth-ingress"
+  chart = "dictybase/auth-ingress"
+  namespace = "dictybase"
+
+  values = [
+    "${file("dictybase-auth-ingress.yaml")}"
+  ]  
+}
+
+resource "helm_release" "dictybase-ingress" {
+  name = "dictybase-ingress"
+  chart = "dictybase/dictybase-ingress"
+  namespace = "dictybase"
+
+  values = [
+    "${file("dictybase-ingress.yaml")}"
+  ]  
+}
+
+## minio goes here
+
+resource "helm_release" "kube-arangodb-crd" {
+  name = "kube-arangodb-crd"
+  chart = "https://github.com/arangodb/kube-arangodb/releases/download/0.3.11/kube-arangodb-crd.tgz"
+}
+
+resource "helm_release" "kube-arangodb" {
+  name = "kube-arangodb"
+  chart = "https://github.com/arangodb/kube-arangodb/releases/download/0.3.11/kube-arangodb.tgz"
+  namespace = "dictybase"
+
+  set {
+    name = "DeploymentReplication.Create"
+    value = "false"
+  }
+}
+
+resource "helm_release" "dictybase-arangodb" {
+  name = "dictybase-arangodb"
+  chart = "dictybase/arangodb"
+  namespace = "dictybase"
+
+  set {
+    name = "arangodb.dbservers.storageClass"
+    value = "fast"
+  }
+
+  set {
+    name = "arangodb.single.storage"
+    value = "50Gi"
+  }
+}
+
+resource "helm_release" "arango-create-database" {
+  name = "arango-create-database"
+  chart = "dictybase/arango-create-database"
+  namespace = "dictybase"
+
+  values = [
+    "${file("arango-create-database.yaml")}"
+  ]    
 }
 
 ## -- create config folder tree and stub values files
