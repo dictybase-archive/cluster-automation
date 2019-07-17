@@ -15,6 +15,8 @@ variable "apps" {
   default = ["minio", "redis"]
 }
 
+variable "env" {}
+
 variable "env_value_files"  {
   default = ["dev.yaml", "staging.yaml", "prod.yaml"]
 }
