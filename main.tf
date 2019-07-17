@@ -82,7 +82,7 @@ resource "helm_release" "dictycontent-postgres" {
   namespace = "dictybase"
 
   values = [
-    "${file("dictycontent-postgres.yaml")}"
+    "${file("${var.config_path}/dictycontent-postgres/${var.env}.yaml")}"
   ]
 }
 
@@ -134,8 +134,8 @@ resource "helm_release" "dicty-issuer-certificate" {
   namespace = "dictybase"
 
   values = [
-    "${file("dicty-issuer-certificate.yaml")}"
-  ]  
+    "${file("${var.config_path}/dicty-issuer-certificate/${var.env}.yaml")}"
+  ]
 }
 
 resource "helm_release" "dictybase-auth-ingress" {
@@ -144,8 +144,8 @@ resource "helm_release" "dictybase-auth-ingress" {
   namespace = "dictybase"
 
   values = [
-    "${file("dictybase-auth-ingress.yaml")}"
-  ]  
+    "${file("${var.config_path}/dictybase-auth-ingress/${var.env}.yaml")}"
+  ]
 }
 
 resource "helm_release" "dictybase-ingress" {
@@ -154,8 +154,8 @@ resource "helm_release" "dictybase-ingress" {
   namespace = "dictybase"
 
   values = [
-    "${file("dictybase-ingress.yaml")}"
-  ]  
+    "${file("${var.config_path}/dictybase-ingress/${var.env}.yaml")}"
+  ]
 }
 
 ## minio goes here
@@ -198,8 +198,8 @@ resource "helm_release" "arango-create-database" {
   namespace = "dictybase"
 
   values = [
-    "${file("arango-create-database.yaml")}"
-  ]    
+    "${file("${var.config_path}/arango-create-database/${var.env}.yaml")}"
+  ]
 }
 
 ## -- create config folder tree and stub values files
