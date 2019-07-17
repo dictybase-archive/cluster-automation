@@ -11,6 +11,10 @@ variable "redis_version" {
   default = "3.7.3"
 }
 
+variable "kubeless_version" {
+  default = "2.0.6"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
