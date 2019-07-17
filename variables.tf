@@ -11,6 +11,42 @@ variable "redis_version" {
   default = "3.7.3"
 }
 
+variable "issuer_certificate_version" {
+  default = "0.0.2"
+}
+
+variable "dictybase_ingress_version" {
+  default = "2.1.0"
+}
+
+variable "nats_version" {
+  default = "0.0.2"
+}
+
+variable "nats_operator_version" {
+  default = "0.0.2"
+}
+
+variable "dictycontent_schema_version" {
+  default = "1.1.0"
+}
+
+variable "dictyuser_schema_version" {
+  default = "3.1.0"
+}
+
+variable "dictycontent_postgres_version" {
+  default = "2.0.1"
+}
+
+variable "dictybase_arangodb_version" {
+  default = "0.5.0"
+}
+
+variable "dictybase_arango_create_db_version" {
+  default = "0.0.3"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
@@ -19,10 +55,33 @@ variable "apps" {
   default = ["minio", "redis"]
 }
 
-
 variable "env" {}
 
 variable "env_value_files"  {
   default = ["dev.yaml", "staging.yaml", "prod.yaml"]
 }
+
+variable "argo_namespace" {
+  default = "argo"
+}
+
+variable "minio_secret" {
+  default = "minio-secret"
+}
+
+
+variable "docker_secret" {
+  default = "docker-secret"
+}
+
+variable "docker_config_path" {
+  default = pathexpand("~/.docker/config.json")
+}
+
+variable "slack_secret" {
+  default = "slack-secret"
+}
+
+variable "slack_secret_data" {}
+
 
