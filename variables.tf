@@ -47,6 +47,10 @@ variable "dictybase_arango_create_db_version" {
   default = "0.0.3"
 }
 
+variable "argo_events_version" {
+  default = "0.4.2"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}

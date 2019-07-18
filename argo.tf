@@ -84,3 +84,15 @@ resource "github_repository_webhook" "frontend" {
   }
   events = ["push"]
 }
+
+
+resource "helm_release" "argo_events" {
+  name = "argo-events"
+  chart = "argo/argo-events"
+  namespace = "${var.argo_namespace}"
+  version = "${var.argo_events_version}"
+  set {
+    name = "namespace"
+    value = "${var.argo_namespace}"
+  }
+}
