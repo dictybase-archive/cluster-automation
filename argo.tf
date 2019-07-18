@@ -1,3 +1,19 @@
+data "local_file" "minio_config" {
+  filename = "${var.minio_config_path}"
+}
+
+locals = {
+  minio_data = yamldecode("${data.local_file.minio_config.content}")
+}
+
+data "local_file" "argo_config" {
+  filename = "${var.argo_config_path}"
+}
+
+locals = {
+  argo_data = yamldecode("${data.local_file.argo_config.content}")
+}
+
 resource "null_resource" "argo_namespace" {
   provisioner "local_exec" {
     command = "create ns ${var.argo_namespace}"
@@ -15,9 +31,6 @@ resource "helm_release" "argo-certificate" {
   ]
 }
 
-locals = {
-  minio_data = yamlencode(file("${var.config_path}/minio/${var.env}.yaml"))
-}
 
 resource "kubernetes_secret" "minio-secret" {
   metadata {
@@ -58,4 +71,16 @@ resource "helm_release" "github-ingress" {
   values = [
     "${var.config_path}/argo-ingress/${var.env}.yaml"
   ]
+}
+
+resource "github_repository_webhook" "frontend" {
+  count = length("${var.github_repositories}") 
+  repository = "${var.github_repositories[count.index]}"
+  configuration {
+    url = local.argo_data.eventSource.hookURL + "/github/${var.github_repositories[count.index]}"
+    content_type = "json" 
+    insecure_ssl = false
+    secret = "${var.webhook_secret}"
+  }
+  events = ["push"]
 }

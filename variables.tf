@@ -84,4 +84,39 @@ variable "slack_secret" {
 
 variable "slack_secret_data" {}
 
+variable "minio_config_path" {
+  default = "${var.config_path}/minio/${var.env}.yaml"
+}
 
+variable "argo_config_path" {
+  default = "${var.config_path}/argo-pipeline/${var.env}.yaml"
+}
+
+variable "github_access_token" {
+  default = pathexpand("~/.github-webhook")
+}
+
+variable "github_organization" {
+  default = "dictyBase"
+}
+
+variable "github_repositories" {
+  default = [
+    "dicty-stock-center",
+    "dicty-frontpage",
+    "genomepage",
+    "dictyaccess",
+    "publication",
+    "modware-stock",
+    "modware-order",
+    "modware-annotation",
+    "modware-identity",
+    "modware-user",
+    "modware-content",
+    "graphql-server",
+  ]
+}
+
+variable "webhook_secret" {
+  default = uuidv5("url", "https://dictybase.org")
+}
