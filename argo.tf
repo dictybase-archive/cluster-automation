@@ -96,3 +96,73 @@ resource "helm_release" "argo_events" {
     value = "${var.argo_namespace}"
   }
 }
+
+resource "kubernetes_service_account" "argo_workflow" {
+  metadata {
+    name = "${var.argo_service_account}"
+    namespace = "${var.argo_namespace}"
+  }
+}
+
+resource "kubernetes_role" "argo_workflow_role" {
+  metadata {
+    name = "${var.argo_service_account}-role"
+    namespace = "${var.argo_namespace}"
+  }
+  rule {
+    api_groups = [""]
+    resources = ["pods","pods/exec"]
+    verbs = [
+      "create",
+      "get",
+      "list",
+      "watch",
+      "update",
+      "patch",
+      "delete",
+    ]
+  }
+  rule {
+    api_groups = [""]
+    resources = ["configmaps"]
+    verbs = ["get","watch","list"]
+  }
+  rule {
+    api_groups = [""]
+    resources = ["persistentvolumeclaims"]
+    verbs = ["create","delete"]
+  }
+  rule {
+    api_groups = [""]
+    resources = ["secrets"]
+    verbs = ["create","get","watch","list"]
+  }
+  rule {
+    api_groups = ["argoproj.io"]
+    resources = ["workflows","workflows/finalizers"]
+    verbs = [
+      "get",
+      "list",
+      "watch",
+      "update",
+      "patch",
+      "delete",
+    ]
+  }
+}
+
+resource "kubernetes_role_binding" "argo-role-binding" {
+  metadata {
+    name = "${var.argo_service_account}-binding"
+    namespace = "${var.argo_namespace}"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io" 
+    kind = "Role"
+    name = "${var.argo_service_account}-role"
+  }
+  subject {
+    kind = "ServiceAccount"
+    name = "${var.argo_service_account}"
+  }
+}

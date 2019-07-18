@@ -69,6 +69,10 @@ variable "argo_namespace" {
   default = "argo"
 }
 
+variable "argo_service_account" {
+  default = "argo-workflow"
+}
+
 variable "minio_secret" {
   default = "minio-secret"
 }
