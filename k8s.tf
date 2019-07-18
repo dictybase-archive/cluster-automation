@@ -3,8 +3,12 @@ provider "helm" {
     kubernetes {}
 }
 
+data "local_file" "github_access_token" {
+  filename = pathexpand("${var.github_token_path}")
+}
+
 provider "github" {
-  token = "${var.github_access_token}"
+  token = trimspace("${data.local_file.github_access_token.content}")
   organization = "${var.github_organization}"
 }
 

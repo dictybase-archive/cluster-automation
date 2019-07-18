@@ -14,6 +14,16 @@ locals = {
   argo_data = yamldecode("${data.local_file.argo_config.content}")
 }
 
+resource "random_string" "webhook_secret" {
+  length  = 16
+  special = false
+}
+
+locals {
+  webhook_secret = "${random_string.webhook_secret.result}"
+}
+
+
 resource "null_resource" "argo_namespace" {
   provisioner "local_exec" {
     command = "create ns ${var.argo_namespace}"
@@ -63,6 +73,27 @@ resource "kubernetes_secret" "slack-secret" {
   }
 }
 
+resource "kubernetes_secret" "slack-secret" {
+  metadata {
+    name = "${var.slack_secret}"
+    namespace = "${var.argo_namespace}"
+  }
+  data = {
+    "oauth-token" = "${var.slack_secret_data}"
+  }
+}
+
+resource "kubernetes_secret" "github-secret" {
+  metadata {
+    name = "${var.github_secret}"
+    namespace = "${var.argo_namespace}"
+  }
+  data = {
+    "apiToken" = trimspace("${data.local_file.github_access_token.content}")
+    "webHookSecret" = local.webhook_secret
+  }
+}
+
 resource "helm_release" "github-ingress" {
   name = "github-gateway-ingress"
   chart = "dictybase/dictybase-ingress"
@@ -73,14 +104,14 @@ resource "helm_release" "github-ingress" {
   ]
 }
 
-resource "github_repository_webhook" "frontend" {
+resource "github_repository_webhook" "dictybase" {
   count = length("${var.github_repositories}") 
   repository = "${var.github_repositories[count.index]}"
   configuration {
     url = local.argo_data.eventSource.hookURL + "/github/${var.github_repositories[count.index]}"
     content_type = "json" 
     insecure_ssl = false
-    secret = "${var.webhook_secret}"
+    secret = local.webhook_secret
   }
   events = ["push"]
 }
@@ -164,5 +195,23 @@ resource "kubernetes_role_binding" "argo-role-binding" {
   subject {
     kind = "ServiceAccount"
     name = "${var.argo_service_account}"
+  }
+}
+
+
+resource "helm_release" "argo-workflow" {
+  name = "argo-workflow"
+  chart = "argo/argo"
+  namespace = "${var.argo_namespace}"
+  version = "${var.argo_workflow_version}"
+  values = [
+    "${var.config_path}/argo-workflow/${var.env}.yaml"
+  ]
+  set {
+    name = "hooks"
+    value  = [ for u in "${github_repository_webhook.dictybase-docker[*].url}" : {
+      repo = element(split("/",u), 4)
+      id   = element(split("/",u), 7)
+    }]
   }
 }

@@ -51,6 +51,10 @@ variable "argo_events_version" {
   default = "0.4.2"
 }
 
+variable "argo_workflow_version" {
+  default = "0.4.0"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
@@ -90,6 +94,10 @@ variable "slack_secret" {
   default = "slack-secret"
 }
 
+variable "github_secret" {
+  default = "github-access"
+}
+
 variable "slack_secret_data" {}
 
 variable "minio_config_path" {
@@ -100,8 +108,8 @@ variable "argo_config_path" {
   default = "${var.config_path}/argo-pipeline/${var.env}.yaml"
 }
 
-variable "github_access_token" {
-  default = pathexpand("~/.github-webhook")
+variable "github_token_path" {
+  default = "~/.github-webhook"
 }
 
 variable "github_organization" {
@@ -123,8 +131,4 @@ variable "github_repositories" {
     "modware-content",
     "graphql-server",
   ]
-}
-
-variable "webhook_secret" {
-  default = uuidv5("url", "https://dictybase.org")
 }
