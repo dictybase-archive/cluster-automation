@@ -5,10 +5,6 @@ variable "gcloud_account" {}
 
 variable "config_path" {}
 
-variable "kubeless_version" {
-  default = "2.0.6"
-}
-
 variable "apps" {
   default = ["minio", "redis"]
 }

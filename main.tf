@@ -17,11 +17,6 @@ data "helm_repository" "stable" {
   url = "http://storage.googleapis.com/kubernetes-charts"
 }
 
-data "helm_repository" "incubator" {
-  name = "incubator"
-  url = "https://kubernetes-charts-incubator.storage.googleapis.com"
-}
-
 data "helm_repository" "jetstack" {
   name = "jetstack"
   url = "https://charts.jetstack.io"
@@ -44,16 +39,4 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
   }
 }
 
-## -- kubeless
-resource "helm_release" "kubeless" {
-  name = "kubeless"
-  chart = "incubator/kubeless"
-  version =  "${var.kubeless_version}"
-  namespace = "kubeless"
-
-  set {
-    name = "rbac.create"
-    value = "true"
-  }
-}
 
