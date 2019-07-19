@@ -28,37 +28,11 @@ data "helm_repository" "incubator" {
   url = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
-data "helm_repository" "argo" {
-  name = "argo"
-  url = "https://argoproj.github.io/argo-helm"
-}
 
 data "helm_repository" "jetstack" {
   name = "jetstack"
   url = "https://charts.jetstack.io"
 }
-
-
-data "local_file" "minio_config" {
-  filename = "${var.config_path}/minio/${var.env}.yaml"
-}
-
-
-data "local_file" "argo_config" {
-  filename = "${var.config_path}/argo-pipeline/${var.env}.yaml"
-}
-
-data "local_file" "github_token" {
-  filename = pathexpand("${var.github_token_path}")
-}
-
-locals {
-  minio_data = yamldecode("${data.local_file.minio_config.content}")
-  argo_data = yamldecode("${data.local_file.argo_config.content}")
-  webhook_secret = "${random_string.webhook_secret.result}"
-  github_token_data = trimspace("${data.local_file.github_token.content}")
-}
-
 
 ## -- cluster admin
 resource "kubernetes_cluster_role_binding" "cluster_admin" {
