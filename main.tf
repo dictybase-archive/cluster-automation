@@ -203,23 +203,6 @@ resource "helm_release" "dicty-issuer-certificate" {
   values = ["${var.config_path}/dictybase-certificate/${var.env}.yaml"]
 }
 
-## -- dictybase ingress charts
-resource "helm_release" "dictybase-auth-ingress" {
-  name = "dictybase-auth-ingress"
-  chart = "dictybase/dictybase-ingress"
-  namespace = "dictybase"
-  version = "${var.dictybase_ingress_version}"
-  values = ["${var.config_path}/dictybase-auth-certificate/${var.env}.yaml"]
-}
-
-resource "helm_release" "dictybase-ingress" {
-  name = "dictybase-ingress"
-  chart = "dictybase/dictybase-ingress"
-  namespace = "dictybase"
-  version = "${var.dictybase_ingress_version}"
-  values = ["${var.config_path}/dictybase-ingress/${var.env}.yaml"]
-}
-
 ## minio goes here
 
 ## -- arangodb charts
@@ -337,6 +320,23 @@ resource "helm_release" "graphql-server" {
 }
 
 ## data loaders go here
+
+## -- dictybase ingress charts
+resource "helm_release" "dictybase-auth-ingress" {
+  name = "dictybase-auth-ingress"
+  chart = "dictybase/dictybase-ingress"
+  namespace = "dictybase"
+  version = "${var.dictybase_ingress_version}"
+  values = ["${var.config_path}/dictybase-auth-certificate/${var.env}.yaml"]
+}
+
+resource "helm_release" "dictybase-ingress" {
+  name = "dictybase-ingress"
+  chart = "dictybase/dictybase-ingress"
+  namespace = "dictybase"
+  version = "${var.dictybase_ingress_version}"
+  values = ["${var.config_path}/dictybase-ingress/${var.env}.yaml"]
+}
 
 ## install kubeless functions here
 
