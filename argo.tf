@@ -1,33 +1,11 @@
-data "local_file" "minio_config" {
-  filename = "${var.minio_config_path}"
-}
-
-locals = {
-  minio_data = yamldecode("${data.local_file.minio_config.content}")
-}
-
-data "local_file" "argo_config" {
-  filename = "${var.argo_config_path}"
-}
-
-locals = {
-  argo_data = yamldecode("${data.local_file.argo_config.content}")
-}
-
 resource "random_string" "webhook_secret" {
   length  = 16
   special = false
 }
 
-locals {
-  webhook_secret = "${random_string.webhook_secret.result}"
-}
-
-
 resource "null_resource" "argo_namespace" {
-  provisioner "local_exec" {
-    command = "create ns ${var.argo_namespace}"
-    interpreter = "kubectl"
+  provisioner "local-exec" {
+    command = "kubectl create ns ${var.argo_namespace}"
   }
 }
 
@@ -59,17 +37,7 @@ resource "kubernetes_secret" "docker-secret" {
     namespace = "${var.argo_namespace}"
   }
   data = {
-    "config.json" = file("${var.docker_config_path}")
-  }
-}
-
-resource "kubernetes_secret" "slack-secret" {
-  metadata {
-    name = "${var.slack_secret}"
-    namespace = "${var.argo_namespace}"
-  }
-  data = {
-    "oauth-token" = "${var.slack_secret_data}"
+    "config.json" = file(pathexpand("${var.docker_config_path}"))
   }
 }
 
@@ -89,7 +57,7 @@ resource "kubernetes_secret" "github-secret" {
     namespace = "${var.argo_namespace}"
   }
   data = {
-    "apiToken" = trimspace("${data.local_file.github_access_token.content}")
+    "apiToken" = local.github_token_data
     "webHookSecret" = local.webhook_secret
   }
 }
@@ -209,7 +177,7 @@ resource "helm_release" "argo-workflow" {
   ]
   set {
     name = "hooks"
-    value  = [ for u in "${github_repository_webhook.dictybase-docker[*].url}" : {
+    value  = [ for u in "${github_repository_webhook.dictybase[*].url}" : {
       repo = element(split("/",u), 4)
       id   = element(split("/",u), 7)
     }]

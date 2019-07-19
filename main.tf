@@ -72,9 +72,7 @@ resource "helm_release" "dictycontent-postgres" {
   chart = "dictybase/dictycontent-postgres"
   namespace = "dictybase"
   version = "${var.dictycontent_postgres_version}"
-  values = [
-    "${file("dictycontent-postgres.yaml")}"
-  ]
+  values = ["${var.config_path}/dictycontent-postgres/${var.env}.yaml"]
 }
 
 resource "helm_release" "dictycontent-schema" {
@@ -101,16 +99,13 @@ resource "helm_release" "nginx-ingress" {
 ## -- cert-manager for lets encrypt based https access
 resource "null_resource" "cert-manager" {
   provisioner "local-exec" {
-    command = "apply -f https://githubusercontent.com/jetstack/cert-manager/${var.cert_manager_version}/deploy/manifests/00-crds.yaml"
-    interpreter = "kubectl"
+    command = "kubectl apply -f https://githubusercontent.com/jetstack/cert-manager/${var.cert_manager_version}/deploy/manifests/00-crds.yaml"
   }
   provisioner "local-exec" {
-    command = "create ns cert-manager"
-    interpreter = "kubectl"
+    command = "kubectl create ns cert-manager"
   }
   provisioner "local-exec" {
-    command = "label namespace cert-manager certmanager.k8s.io/disable-validation=true"
-    interpreter = "kubectl"
+    command = "kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true"
   }
 }
 
@@ -126,9 +121,7 @@ resource "helm_release" "dicty-issuer-certificate" {
   chart = "dictybase/issuer-certificate"
   namespace = "dictybase"
   version = "${var.issuer_certificate_version}"
-  values = [
-    "${file("dicty-issuer-certificate.yaml")}"
-  ]  
+  values = ["${var.config_path}/dictybase-certificate/${var.env}.yaml"]
 }
 
 resource "helm_release" "dictybase-auth-ingress" {
@@ -136,9 +129,7 @@ resource "helm_release" "dictybase-auth-ingress" {
   chart = "dictybase/dictybase-ingress"
   namespace = "dictybase"
   version = "${var.dictybase_ingress_version}"
-  values = [
-    "${file("dictybase-auth-ingress.yaml")}"
-  ]  
+  values = ["${var.config_path}/dictybase-auth-certificate/${var.env}.yaml"]
 }
 
 resource "helm_release" "dictybase-ingress" {
@@ -146,9 +137,7 @@ resource "helm_release" "dictybase-ingress" {
   chart = "dictybase/dictybase-ingress"
   namespace = "dictybase"
   version = "${var.dictybase_ingress_version}"
-  values = [
-    "${file("dictybase-ingress.yaml")}"
-  ]  
+  values = ["${var.config_path}/dictybase-ingress/${var.env}.yaml"]
 }
 
 ## minio goes here
@@ -181,7 +170,7 @@ resource "helm_release" "dictybase-arangodb" {
 
   set {
     name = "arangodb.single.storage"
-    value = "50Gi"
+    value = "${var.arangodb_storage_size}"
   }
 }
 
@@ -190,7 +179,5 @@ resource "helm_release" "arango-create-database" {
   chart = "dictybase/arango-create-database"
   namespace = "dictybase"
   version = "${var.dictybase_arango_create_db_version}"
-  values = [
-    "${file("arango-create-database.yaml")}"
-  ]    
+  values = ["${var.config_path}/arango-createdb/${var.env}.yaml"]
 }

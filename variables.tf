@@ -1,4 +1,24 @@
 # Variables
+data "local_file" "minio_config" {
+  filename = "${var.config_path}/minio/${var.env}.yaml"
+}
+
+
+data "local_file" "argo_config" {
+  filename = "${var.config_path}/argo-pipeline/${var.env}.yaml"
+}
+
+data "local_file" "github_token" {
+  filename = pathexpand("${var.github_token_path}")
+}
+
+locals {
+  minio_data = yamldecode("${data.local_file.minio_config.content}")
+  argo_data = yamldecode("${data.local_file.argo_config.content}")
+  webhook_secret = "${random_string.webhook_secret.result}"
+  github_token_data = trimspace("${data.local_file.github_token.content}")
+}
+
 variable "cert_manager_version" {
   default = "v0.8.0"
 }
@@ -55,6 +75,10 @@ variable "argo_workflow_version" {
   default = "0.4.0"
 }
 
+variable  "arangodb_storage_size" {
+  default = "50Gi"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
@@ -87,7 +111,7 @@ variable "docker_secret" {
 }
 
 variable "docker_config_path" {
-  default = pathexpand("~/.docker/config.json")
+  default = "~/.docker/config.json"
 }
 
 variable "slack_secret" {
@@ -99,14 +123,6 @@ variable "github_secret" {
 }
 
 variable "slack_secret_data" {}
-
-variable "minio_config_path" {
-  default = "${var.config_path}/minio/${var.env}.yaml"
-}
-
-variable "argo_config_path" {
-  default = "${var.config_path}/argo-pipeline/${var.env}.yaml"
-}
 
 variable "github_token_path" {
   default = "~/.github-webhook"
