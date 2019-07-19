@@ -21,22 +21,6 @@ variable "dictybase_ingress_version" {
   default = "2.1.0"
 }
 
-variable "dictycontent_schema_version" {
-  default = "1.1.0"
-}
-
-variable "dictyuser_schema_version" {
-  default = "3.1.0"
-}
-
-variable "dictybase_arango_create_db_version" {
-  default = "0.0.3"
-}
-
-variable  "arangodb_storage_size" {
-  default = "50Gi"
-}
-
 variable "kubeless_version" {
   default = "2.0.6"
 }
