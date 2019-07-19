@@ -121,19 +121,6 @@ resource "helm_release" "nats" {
   version = "${var.nats_version}"
 }
 
-## -- kubeless
-resource "helm_release" "kubeless" {
-  name = "kubeless"
-  chart = "incubator/kubeless"
-  version =  "${var.kubeless_version}"
-  namespace = "kubeless"
-
-  set {
-    name = "rbac.create"
-    value = "true"
-  }
-}
-
 ## -- redis
 resource "helm_release" "redis" {
   name = "redis"
@@ -343,6 +330,20 @@ resource "helm_release" "dictybase-ingress" {
   namespace = "dictybase"
   version = "${var.dictybase_ingress_version}"
   values = ["${var.config_path}/dictybase-ingress/${var.env}.yaml"]
+}
+
+
+## -- kubeless
+resource "helm_release" "kubeless" {
+  name = "kubeless"
+  chart = "incubator/kubeless"
+  version =  "${var.kubeless_version}"
+  namespace = "kubeless"
+
+  set {
+    name = "rbac.create"
+    value = "true"
+  }
 }
 
 ## install kubeless functions here
