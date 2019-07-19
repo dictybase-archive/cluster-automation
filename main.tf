@@ -194,12 +194,12 @@ resource "helm_release" "minio" {
 ## -- arangodb charts
 resource "helm_release" "kube-arangodb-crd" {
   name = "kube-arangodb-crd"
-  chart = "https://github.com/arangodb/kube-arangodb/releases/download/0.3.11/kube-arangodb-crd.tgz"
+  chart = "https://github.com/arangodb/kube-arangodb/releases/download/${var.arango_chart_version}/kube-arangodb-crd.tgz"
 }
 
 resource "helm_release" "kube-arangodb" {
   name = "kube-arangodb"
-  chart = "https://github.com/arangodb/kube-arangodb/releases/download/0.3.11/kube-arangodb.tgz"
+  chart = "https://github.com/arangodb/kube-arangodb/releases/download/${var.arango_chart_version}/kube-arangodb.tgz"
   namespace = "dictybase"
 
   set {

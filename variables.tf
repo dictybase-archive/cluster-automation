@@ -43,6 +43,10 @@ variable "dictycontent_postgres_version" {
   default = "2.0.1"
 }
 
+variable "arango_chart_version" {
+  default = "0.3.11"
+}
+
 variable "dictybase_arangodb_version" {
   default = "0.5.0"
 }
