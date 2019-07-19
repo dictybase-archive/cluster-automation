@@ -1,14 +1,16 @@
 # Variables
+variable "env" {}
+
+variable "gcloud_account" {}
+
+variable "config_path" {}
+
 variable "cert_manager_version" {
   default = "v0.8.0"
 }
 
 variable "nginx_ingress_version" {
   default = "1.6.8"
-}
-
-variable "redis_version" {
-  default = "3.7.3"
 }
 
 variable "issuer_certificate_version" {
@@ -19,36 +21,12 @@ variable "dictybase_ingress_version" {
   default = "2.1.0"
 }
 
-variable "nats_version" {
-  default = "0.0.2"
-}
-
-variable "nats_operator_version" {
-  default = "0.0.2"
-}
-
-variable "minio_version" {
-  default = "2.4.14"
-}
-
 variable "dictycontent_schema_version" {
   default = "1.1.0"
 }
 
 variable "dictyuser_schema_version" {
   default = "3.1.0"
-}
-
-variable "dictycontent_postgres_version" {
-  default = "2.0.1"
-}
-
-variable "arango_chart_version" {
-  default = "0.3.11"
-}
-
-variable "dictybase_arangodb_version" {
-  default = "0.5.0"
 }
 
 variable "dictybase_arango_create_db_version" {
@@ -63,15 +41,9 @@ variable "kubeless_version" {
   default = "2.0.6"
 }
 
-variable "gcloud_account" {}
-
-variable "config_path" {}
-
 variable "apps" {
   default = ["minio", "redis"]
 }
-
-variable "env" {}
 
 variable "env_value_files"  {
   default = ["dev.yaml", "staging.yaml", "prod.yaml"]
