@@ -5,11 +5,19 @@ variable "env" {}
 
 variable "slack_secret_data" {}
 
+variable "github_organization" {}
+
+variable "github_token_path" {}
+
 variable "argo_events_version" {
   default = "0.4.2"
 }
 
 variable "argo_workflow_version" {
+  default = "0.4.0"
+}
+
+variable "argo_github_pipeline_version" {
   default = "0.4.0"
 }
 
@@ -39,15 +47,6 @@ variable "slack_secret" {
 
 variable "github_secret" {
   default = "github-access"
-}
-
-
-variable "github_token_path" {
-  default = "~/.github-webhook"
-}
-
-variable "github_organization" {
-  default = "dictyBase"
 }
 
 variable "github_repositories" {

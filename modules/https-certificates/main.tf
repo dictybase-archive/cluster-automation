@@ -75,3 +75,13 @@ resource "helm_release" "argo-certificate" {
     "${var.config_path}/argo-certificate/${var.env}.yaml"
   ]
 }
+
+resource "helm_release" "github-ingress" {
+  name = "github-gateway-ingress"
+  chart = "dictybase/dictybase-ingress"
+  namespace = "${var.argo_namespace}"
+  version = "${var.dictybase_ingress_version}"
+  values = [
+    "${var.config_path}/argo-ingress/${var.env}.yaml"
+  ]
+}

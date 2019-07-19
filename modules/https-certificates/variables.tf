@@ -18,3 +18,7 @@ variable "dictybase_ingress_version" {
   default = "2.1.0"
 }
 
+variable "argo_namespace" {
+  default = "argo"
+}
+

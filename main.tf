@@ -7,19 +7,17 @@ provider "helm" {
     kubernetes {}
 }
 
+data "local_file" "github_token" {
+  filename = pathexpand("${var.github_token_path}")
+}
+
+locals {
+  github_token_data = trimspace("${data.local_file.github_token.content}")
+}
+
 provider "github" {
   token = local.github_token_data
   organization = "${var.github_organization}"
-}
-
-data "helm_repository" "stable" {
-  name = "stable"
-  url = "http://storage.googleapis.com/kubernetes-charts"
-}
-
-data "helm_repository" "jetstack" {
-  name = "jetstack"
-  url = "https://charts.jetstack.io"
 }
 
 ## -- cluster admin
@@ -38,5 +36,3 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
     api_group = "rbac.authorization.k8s.io"
   }
 }
-
-

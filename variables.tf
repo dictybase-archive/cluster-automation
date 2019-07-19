@@ -5,10 +5,12 @@ variable "gcloud_account" {}
 
 variable "config_path" {}
 
-variable "apps" {
-  default = ["minio", "redis"]
+variable "slack_secret_data" {}
+
+variable "github_organization" {
+  default = "dictyBase"
 }
 
-variable "env_value_files"  {
-  default = ["dev.yaml", "staging.yaml", "prod.yaml"]
+variable "github_token_path" {
+  default = "~/.github-webhook"
 }
