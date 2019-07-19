@@ -181,14 +181,6 @@ resource "helm_release" "cert_manager" {
   namespace = "cert-manager"
 }
 
-## -- dictybase issuer and certificate
-resource "helm_release" "dicty-issuer-certificate" {
-  name = "dicty-issuer-certificate"
-  chart = "dictybase/issuer-certificate"
-  namespace = "dictybase"
-  version = "${var.issuer_certificate_version}"
-  values = ["${var.config_path}/dictybase-certificate/${var.env}.yaml"]
-}
 
 ## minio goes here
 resource "helm_release" "minio" {
@@ -314,6 +306,15 @@ resource "helm_release" "graphql-server" {
 }
 
 ## data loaders go here
+
+## -- dictybase issuer and certificate
+resource "helm_release" "dicty-issuer-certificate" {
+  name = "dicty-issuer-certificate"
+  chart = "dictybase/issuer-certificate"
+  namespace = "dictybase"
+  version = "${var.issuer_certificate_version}"
+  values = ["${var.config_path}/dictybase-certificate/${var.env}.yaml"]
+}
 
 ## -- dictybase ingress charts
 resource "helm_release" "dictybase-auth-ingress" {
