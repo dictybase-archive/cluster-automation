@@ -5,10 +5,6 @@ variable "env" {}
 
 variable "slack_secret_data" {}
 
-variable "issuer_certificate_version" {
-  default = "0.0.2"
-}
-
 variable "argo_events_version" {
   default = "0.4.2"
 }

@@ -35,17 +35,6 @@ resource "null_resource" "argo_namespace" {
   }
 }
 
-resource "helm_release" "argo-certificate" {
-  name = "argo-certificate"
-  chart = "dictybase/issuer-certificate"
-  namespace = "${var.argo_namespace}"
-  version = "${var.issuer_certificate_version}"
-  values = [
-    "${var.config_path}/argo-certificate/${var.env}.yaml"
-  ]
-}
-
-
 resource "kubernetes_secret" "minio-secret" {
   metadata {
     name = "${var.minio_secret}"
