@@ -204,6 +204,13 @@ resource "helm_release" "dicty-issuer-certificate" {
 }
 
 ## minio goes here
+resource "helm_release" "minio" {
+  name = "minio"
+  chart = "stable/minio"
+  namespace = "dictybase"
+  version = "${var.minio_version}"
+  values = ["${var.config_path}/minio/${var.env}.yaml"]
+}
 
 ## -- arangodb charts
 resource "helm_release" "kube-arangodb-crd" {

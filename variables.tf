@@ -27,6 +27,10 @@ variable "nats_operator_version" {
   default = "0.0.2"
 }
 
+variable "minio_version" {
+  default = "2.4.14"
+}
+
 variable "dictycontent_schema_version" {
   default = "1.1.0"
 }
