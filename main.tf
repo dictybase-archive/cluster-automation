@@ -38,19 +38,19 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
 }
 
 
-modules "storage-services" {
+module "storage-services" {
   source = "./modules/storage-services"
   config_path = "${var.config_path}"
   env = "${var.env}"
 }
 
-modules "https-certificates" {
+module "https-certificates" {
   source = "./modules/https-certificates"
   config_path = "${var.config_path}"
   env = "${var.env}"
 }
 
-modules "argo" {
+module "argo" {
   source = "./modules/argo"
   config_path = "${var.config_path}"
   env = "${var.env}"
@@ -59,13 +59,13 @@ modules "argo" {
   github_token_path = "${var.github_token_path}"
 }
 
-modules "backend-api" {
+module "backend-api" {
   source = "./modules/backend-api"
   config_path = "${var.config_path}"
   env = "${var.env}"
 }
 
-modules "frontend-app" {
+module "frontend-app" {
   source = "./modules/frontend-app"
   config_path = "${var.config_path}"
   env = "${var.env}"
