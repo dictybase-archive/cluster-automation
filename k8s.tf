@@ -3,6 +3,11 @@ provider "helm" {
     kubernetes {}
 }
 
+provider "github" {
+  token = local.github_token_data
+  organization = "${var.github_organization}"
+}
+
 data "helm_repository" "stable" {
   name = "stable"
   url = "http://storage.googleapis.com/kubernetes-charts"

@@ -49,12 +49,14 @@ resource "helm_release" "nats-operator" {
   name = "nats-operator"
   chart = "dictybase/nats-operator"
   namespace = "dictybase"
+  version = "${var.nats_operator_version}"
 }
 
 resource "helm_release" "nats" {
   name = "nats"
   chart = "dictybase/nats"
   namespace = "dictybase"
+  version = "${var.nats_version}"
 }
 
 ## -- kubeless
@@ -83,10 +85,8 @@ resource "helm_release" "dictycontent-postgres" {
   name = "dictycontent-postgres"
   chart = "dictybase/dictycontent-postgres"
   namespace = "dictybase"
-
-  values = [
-    "${var.config_path}/dictycontent-postgres/${var.env}.yaml"
-  ]
+  version = "${var.dictycontent_postgres_version}"
+  values = ["${var.config_path}/dictycontent-postgres/${var.env}.yaml"]
 }
 
 ## -- postgres schema loaders
@@ -94,12 +94,14 @@ resource "helm_release" "dictycontent-schema" {
   name = "dictycontent-schema"
   chart = "dictybase/dictycontent-schema"
   namespace = "dictybase"
+  version = "${var.dictycontent_schema_version}"
 }
 
 resource "helm_release" "dictyuser-schema" {
   name = "dictyuser-schema"
   chart = "dictybase/dictyuser-schema"
   namespace = "dictybase"
+  version = "${var.dictyuser_schema_version}"
 }
 
 ## -- nginx ingress controller
@@ -112,16 +114,13 @@ resource "helm_release" "nginx-ingress" {
 ## -- cert-manager for lets encrypt based https access
 resource "null_resource" "cert-manager" {
   provisioner "local-exec" {
-    command = "apply -f https://githubusercontent.com/jetstack/cert-manager/${var.cert_manager_version}/deploy/manifests/00-crds.yaml"
-    interpreter = "kubectl"
+    command = "kubectl apply -f https://githubusercontent.com/jetstack/cert-manager/${var.cert_manager_version}/deploy/manifests/00-crds.yaml"
   }
   provisioner "local-exec" {
-    command = "create ns cert-manager"
-    interpreter = "kubectl"
+    command = "kubectl create ns cert-manager"
   }
   provisioner "local-exec" {
-    command = "label namespace cert-manager certmanager.k8s.io/disable-validation=true"
-    interpreter = "kubectl"
+    command = "kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true"
   }
 }
 
@@ -137,31 +136,25 @@ resource "helm_release" "dicty-issuer-certificate" {
   name = "dicty-issuer-certificate"
   chart = "dictybase/issuer-certificate"
   namespace = "dictybase"
-
-  values = [
-    "${var.config_path}/dicty-issuer-certificate/${var.env}.yaml"
-  ]
+  version = "${var.issuer_certificate_version}"
+  values = ["${var.config_path}/dictybase-certificate/${var.env}.yaml"]
 }
 
 ## -- dictybase ingress charts
 resource "helm_release" "dictybase-auth-ingress" {
   name = "dictybase-auth-ingress"
-  chart = "dictybase/auth-ingress"
+  chart = "dictybase/dictybase-ingress"
   namespace = "dictybase"
-
-  values = [
-    "${var.config_path}/dictybase-auth-ingress/${var.env}.yaml"
-  ]
+  version = "${var.dictybase_ingress_version}"
+  values = ["${var.config_path}/dictybase-auth-certificate/${var.env}.yaml"]
 }
 
 resource "helm_release" "dictybase-ingress" {
   name = "dictybase-ingress"
   chart = "dictybase/dictybase-ingress"
   namespace = "dictybase"
-
-  values = [
-    "${var.config_path}/dictybase-ingress/${var.env}.yaml"
-  ]
+  version = "${var.dictybase_ingress_version}"
+  values = ["${var.config_path}/dictybase-ingress/${var.env}.yaml"]
 }
 
 ## minio goes here
@@ -187,7 +180,7 @@ resource "helm_release" "dictybase-arangodb" {
   name = "dictybase-arangodb"
   chart = "dictybase/arangodb"
   namespace = "dictybase"
-
+  version = "${var.dictybase_arangodb_version}"
   set {
     name = "arangodb.dbservers.storageClass"
     value = "fast"
@@ -195,7 +188,7 @@ resource "helm_release" "dictybase-arangodb" {
 
   set {
     name = "arangodb.single.storage"
-    value = "50Gi"
+    value = "${var.arangodb_storage_size}"
   }
 }
 
@@ -203,10 +196,7 @@ resource "helm_release" "arango-create-database" {
   name = "arango-create-database"
   chart = "dictybase/arango-create-database"
   namespace = "dictybase"
-
-  values = [
-    "${var.config_path}/arango-create-database/${var.env}.yaml"
-  ]
+  values = ["${var.config_path}/arango-createdb/${var.env}.yaml"]
 }
 
 ## argo goes here
@@ -336,12 +326,4 @@ resource "helm_release" "publication" {
   values = [
     "${var.config_path}/publication/${var.env}.yaml"
   ]
-}
-
-## -- create config folder tree and stub values files
-resource "null_resource" "tree_value_files" {
-  provisioner "local-exec" {
-    command = "mkdir -p ${join(" ", ${formatlist("%s/%s", ${var.config_path}, ${var.apps})})}"
-    interpreter = "/bin/bash -c"
-  }
 }
