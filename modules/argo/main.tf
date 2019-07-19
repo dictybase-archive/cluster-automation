@@ -1,24 +1,42 @@
+data "helm_repository" "argo" {
+  name = "argo"
+  url = "https://argoproj.github.io/argo-helm"
+}
+
+data "helm_repository" "dictybase" {
+  name = "dictybase"
+  url = "https://dictybase-docker.github.io/kubernetes-charts"
+}
+
+data "local_file" "minio_config" {
+  filename = "${var.config_path}/minio/${var.env}.yaml"
+}
+
+data "local_file" "argo_config" {
+  filename = "${var.config_path}/argo-pipeline/${var.env}.yaml"
+}
+
+data "local_file" "github_token" {
+  filename = pathexpand("${var.github_token_path}")
+}
+
+locals {
+  minio_data = yamldecode("${data.local_file.minio_config.content}")
+  argo_data = yamldecode("${data.local_file.argo_config.content}")
+  webhook_secret = "${random_string.webhook_secret.result}"
+  github_token_data = trimspace("${data.local_file.github_token.content}")
+}
+
 resource "random_string" "webhook_secret" {
   length  = 16
   special = false
 }
 
-resource "null_resource" "argo_namespace" {
+resource "null_resource" "argo-namespace" {
   provisioner "local-exec" {
     command = "kubectl create ns ${var.argo_namespace}"
   }
 }
-
-resource "helm_release" "argo-certificate" {
-  name = "argo-certificate"
-  chart = "dictybase/issuer-certificate"
-  namespace = "${var.argo_namespace}"
-  version = "${var.issuer_certificate_version}"
-  values = [
-    "${var.config_path}/argo-certificate/${var.env}.yaml"
-  ]
-}
-
 
 resource "kubernetes_secret" "minio-secret" {
   metadata {
@@ -62,15 +80,6 @@ resource "kubernetes_secret" "github-secret" {
   }
 }
 
-resource "helm_release" "github-ingress" {
-  name = "github-gateway-ingress"
-  chart = "dictybase/dictybase-ingress"
-  namespace = "${var.argo_namespace}"
-  version = "${var.dictybase_ingress_version}"
-  values = [
-    "${var.config_path}/argo-ingress/${var.env}.yaml"
-  ]
-}
 
 resource "github_repository_webhook" "dictybase" {
   count = length("${var.github_repositories}") 
@@ -85,7 +94,7 @@ resource "github_repository_webhook" "dictybase" {
 }
 
 
-resource "helm_release" "argo_events" {
+resource "helm_release" "argo-events" {
   name = "argo-events"
   chart = "argo/argo-events"
   namespace = "${var.argo_namespace}"
@@ -96,14 +105,14 @@ resource "helm_release" "argo_events" {
   }
 }
 
-resource "kubernetes_service_account" "argo_workflow" {
+resource "kubernetes_service_account" "argo-workflow" {
   metadata {
     name = "${var.argo_service_account}"
     namespace = "${var.argo_namespace}"
   }
 }
 
-resource "kubernetes_role" "argo_workflow_role" {
+resource "kubernetes_role" "argo-workflow-role" {
   metadata {
     name = "${var.argo_service_account}-role"
     namespace = "${var.argo_namespace}"
@@ -166,7 +175,6 @@ resource "kubernetes_role_binding" "argo-role-binding" {
   }
 }
 
-
 resource "helm_release" "argo-workflow" {
   name = "argo-workflow"
   chart = "argo/argo"
@@ -174,6 +182,16 @@ resource "helm_release" "argo-workflow" {
   version = "${var.argo_workflow_version}"
   values = [
     "${var.config_path}/argo-workflow/${var.env}.yaml"
+  ]
+}
+
+resource "helm_release" "argo-github-pipeline" {
+  name = "argo-github-pipeline"
+  chart = "dictybase/argo-pipeline"
+  namespace = "${var.argo_namespace}"
+  version = "${var.argo_github_pipeline_version}"
+  values = [
+    "${var.config_path}/argo-github-pipeline/${var.env}.yaml"
   ]
   set {
     name = "hooks"
