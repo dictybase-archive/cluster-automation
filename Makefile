@@ -1,6 +1,6 @@
 ACCOUNT = $(shell gcloud config list account --format "value(core.account)")
 CONFIG_PATH = $(shell pwd)
-APPS = minio redis argo-certificate argo-ingress argo-workflow dictycontent-postgres 
+APPS = minio redis argo-certificate argo-ingress argo-workflow dictycontent-postgres argo-github-pipeline
 APPS += dictybase-auth-certificate dictybase-ingress arango-createdb dictycontent-postgres 
 APPS += dictybase-certificate dictybase-auth-certificate dictybase-ingress
 APPS += content-api-server user-api-server identity-api-server
