@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 ## -- cluster admin
 resource "kubernetes_cluster_role_binding" "cluster_admin" {
   metadata {
