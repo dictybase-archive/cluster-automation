@@ -140,6 +140,7 @@ resource "helm_release" "redis" {
   chart = "stable/redis"
   version =  "${var.redis_version}"
   namespace = "dictybase"
+  values = ["${var.config_path}/redis/${var.env}.yaml"]
 }
 
 ## - postgres
