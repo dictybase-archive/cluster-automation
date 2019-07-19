@@ -11,6 +11,10 @@ variable "redis_version" {
   default = "3.7.3"
 }
 
+variable "kubeless_version" {
+  default = "2.0.6"
+}
+
 variable "gcloud_account" {}
 
 variable "config_path" {}
@@ -19,13 +23,9 @@ variable "apps" {
   default = ["minio", "redis"]
 }
 
-
-variable "env_value_files" {
-
 variable "env" {}
 
-variable "env_value_files"  {
-
+variable "env_value_files" {
   default = ["dev.yaml", "staging.yaml", "prod.yaml"]
 }
 
