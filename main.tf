@@ -36,3 +36,39 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
     api_group = "rbac.authorization.k8s.io"
   }
 }
+
+
+modules "storage-services" {
+  source = "./modules/storage-services"
+  config_path = "${var.config_path}"
+  env = "${var.env}"
+}
+
+modules "https-certificates" {
+  source = "./modules/https-certificates"
+  config_path = "${var.config_path}"
+  env = "${var.env}"
+}
+
+modules "argo" {
+  source = "./modules/argo"
+  config_path = "${var.config_path}"
+  env = "${var.env}"
+  slack_secret_data = "${var.slack_secret_data}"
+  github_organization = "${var.github_organization}"
+  github_token_path = "${var.github_token_path}"
+}
+
+modules "backend-api" {
+  source = "./modules/backend-api"
+  config_path = "${var.config_path}"
+  env = "${var.env}"
+}
+
+modules "frontend-app" {
+  source = "./modules/frontend-app"
+  config_path = "${var.config_path}"
+  env = "${var.env}"
+}
+
+
