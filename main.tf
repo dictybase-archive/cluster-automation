@@ -44,6 +44,7 @@ resource "kubernetes_storage_class" "fast" {
   }
 }
 
+## -- nats charts
 resource "helm_release" "nats-operator" {
   name = "nats-operator"
   chart = "dictybase/nats-operator"
@@ -58,8 +59,20 @@ resource "helm_release" "nats" {
   version = "${var.nats_version}"
 }
 
-## -- need to install kubeless here
+## -- kubeless
+resource "helm_release" "kubeless" {
+  name = "kubeless"
+  chart = "incubator/kubeless"
+  version =  "${var.kubeless_version}"
+  namespace = "kubeless"
 
+  set {
+    name = "rbac.create"
+    value = "true"
+  }
+}
+
+## -- redis
 resource "helm_release" "redis" {
   name = "redis"
   chart = "stable/redis"
@@ -67,6 +80,7 @@ resource "helm_release" "redis" {
   version =  "${var.redis_version}"
 }
 
+## - postgres
 resource "helm_release" "dictycontent-postgres" {
   name = "dictycontent-postgres"
   chart = "dictybase/dictycontent-postgres"
@@ -75,6 +89,7 @@ resource "helm_release" "dictycontent-postgres" {
   values = ["${var.config_path}/dictycontent-postgres/${var.env}.yaml"]
 }
 
+## -- postgres schema loaders
 resource "helm_release" "dictycontent-schema" {
   name = "dictycontent-schema"
   chart = "dictybase/dictycontent-schema"
@@ -116,6 +131,7 @@ resource "helm_release" "cert_manager" {
   namespace = "cert-manager"
 }
 
+## -- dictybase issuer and certificate
 resource "helm_release" "dicty-issuer-certificate" {
   name = "dicty-issuer-certificate"
   chart = "dictybase/issuer-certificate"
@@ -124,6 +140,7 @@ resource "helm_release" "dicty-issuer-certificate" {
   values = ["${var.config_path}/dictybase-certificate/${var.env}.yaml"]
 }
 
+## -- dictybase ingress charts
 resource "helm_release" "dictybase-auth-ingress" {
   name = "dictybase-auth-ingress"
   chart = "dictybase/dictybase-ingress"
@@ -142,6 +159,7 @@ resource "helm_release" "dictybase-ingress" {
 
 ## minio goes here
 
+## -- arangodb charts
 resource "helm_release" "kube-arangodb-crd" {
   name = "kube-arangodb-crd"
   chart = "https://github.com/arangodb/kube-arangodb/releases/download/0.3.11/kube-arangodb-crd.tgz"
