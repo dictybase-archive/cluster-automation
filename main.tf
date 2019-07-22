@@ -4,7 +4,7 @@ terraform {
 
 provider "kubernetes" {}
 provider "helm" {
-    kubernetes {}
+  kubernetes {}
 }
 
 data "local_file" "github_token" {
@@ -16,7 +16,7 @@ locals {
 }
 
 provider "github" {
-  token = local.github_token_data
+  token        = local.github_token_data
   organization = "${var.github_organization}"
 }
 
@@ -39,36 +39,36 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
 
 
 module "storage-services" {
-  source = "./modules/storage-services"
+  source      = "./modules/storage-services"
   config_path = "${var.config_path}"
-  env = "${var.env}"
+  env         = "${var.env}"
 }
 
 module "https-certificates" {
-  source = "./modules/https-certificates"
+  source      = "./modules/https-certificates"
   config_path = "${var.config_path}"
-  env = "${var.env}"
+  env         = "${var.env}"
 }
 
 module "argo" {
-  source = "./modules/argo"
-  config_path = "${var.config_path}"
-  env = "${var.env}"
-  slack_secret_data = "${var.slack_secret_data}"
+  source              = "./modules/argo"
+  config_path         = "${var.config_path}"
+  env                 = "${var.env}"
+  slack_secret_data   = "${var.slack_secret_data}"
   github_organization = "${var.github_organization}"
-  github_token_path = "${var.github_token_path}"
+  github_token_path   = "${var.github_token_path}"
 }
 
 module "backend-api" {
-  source = "./modules/backend-api"
+  source      = "./modules/backend-api"
   config_path = "${var.config_path}"
-  env = "${var.env}"
+  env         = "${var.env}"
 }
 
 module "frontend-app" {
-  source = "./modules/frontend-app"
+  source      = "./modules/frontend-app"
   config_path = "${var.config_path}"
-  env = "${var.env}"
+  env         = "${var.env}"
 }
 
 
