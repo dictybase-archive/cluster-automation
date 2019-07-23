@@ -93,6 +93,17 @@ resource "github_repository_webhook" "dictybase" {
   events = ["push"]
 }
 
+resource "github_repository_webhook" "dictybase-ontology" {
+  repository = "${var.dictybase_ontology_repo}"
+  configuration {
+    url = local.argo_data.eventSource.hookURL + "/github/${var.dictybase_ontology_repo}"
+    content_type = "json"
+    insecure_ssl = false
+    secret       = local.webhook_secret
+  }
+  events = ["push"]
+}
+
 
 resource "helm_release" "argo-events" {
   name      = "argo-events"
@@ -199,5 +210,19 @@ resource "helm_release" "argo-github-pipeline" {
       repo = element(split("/", u), 4)
       id   = element(split("/", u), 7)
     }]
+  }
+}
+
+resource "helm_release" "argo-ontology-pipeline" {
+  name = "argo-ontology-pipeline"
+  chart = "dictybase/ontology-pipeline"
+  namespace = "${var.argo_namespace}"
+  version   = "${var.argo_ontology_pipeline_version}"
+  values = [
+    "${var.config_path}/ontology-pipeline/${var.env}.yaml"
+  ]
+  set {
+    name = "hooks.id"
+    value = element(split("/","${github_repository_webhook.dictybase-ontology.url}"),7)
   }
 }

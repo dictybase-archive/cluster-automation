@@ -65,3 +65,11 @@ variable "github_repositories" {
     "graphql-server",
   ]
 }
+
+variable "dictybase_ontology_repo" {
+  default = "migration-data"
+}
+
+variable "argo_ontology_pipeline_version" {
+  default = "0.0.1"
+}
