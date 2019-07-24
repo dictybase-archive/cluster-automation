@@ -13,6 +13,10 @@ variable "argo_events_version" {
   default = "0.4.2"
 }
 
+variable "dictybase_configuration_version" {
+  default = "0.0.1"
+}
+
 variable "argo_workflow_version" {
   default = "0.4.0"
 }

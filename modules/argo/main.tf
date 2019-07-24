@@ -186,6 +186,16 @@ resource "kubernetes_role_binding" "argo-role-binding" {
   }
 }
 
+resource "helm_release" "dictybase_configuration" {
+  name      = "dictybase-configuration"
+  chart     = "dictybase/dictybase-configuration"
+  namespace = "${var.argo_namespace}"
+  version   = "${var.dictybase_configuration_version}"
+  values = [
+    "${var.config_path}/dictybase-configuration/${var.env}.yaml"
+  ]
+}
+
 resource "helm_release" "argo-workflow" {
   name      = "argo-workflow"
   chart     = "argo/argo"

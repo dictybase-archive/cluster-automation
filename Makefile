@@ -5,7 +5,7 @@ APPS += dictybase-auth-certificate dictybase-ingress arango-createdb dictyconten
 APPS += dictybase-certificate dictybase-auth-certificate dictybase-ingress
 APPS += content-api-server user-api-server identity-api-server
 APPS += order-api-server stock-api-server annotation-api-server graphql-server
-APPS +=  dicty-stock-center genomepage dictyaccess dicty-frontpage publication
+APPS +=  dicty-stock-center genomepage dictyaccess dicty-frontpage publication dictybase-configuration
 VALUE_FILES = dev.yaml prod.yaml staging.yaml
 CONFIG_TREE = $(addsuffix /config, $(addprefix $(CONFIG_PATH)/,$(APPS)))
 
