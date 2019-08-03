@@ -55,7 +55,7 @@ resource "helm_release" "dictybase-auth-ingress" {
   chart     = "dictybase/dictybase-ingress"
   namespace = "dictybase"
   version   = "${var.dictybase_ingress_version}"
-  values    = ["${var.config_path}/dictybase-auth-certificate/${var.env}.yaml"]
+  values    = ["${var.config_path}/dictybase-auth-ingress/${var.env}.yaml"]
 }
 
 resource "helm_release" "dictybase-ingress" {
