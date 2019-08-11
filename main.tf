@@ -59,6 +59,12 @@ module "argo" {
   github_token_path   = "${var.github_token_path}"
 }
 
+module "keel" {
+  source = "./modules/keel"
+  config_path         = "${var.config_path}"
+  env                 = "${var.env}"
+}
+
 module "backend-api" {
   source      = "./modules/backend-api"
   config_path = "${var.config_path}"
