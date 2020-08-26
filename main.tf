@@ -7,17 +7,17 @@ provider "helm" {
   kubernetes {}
 }
 
+provider "github" {
+  token        = local.github_token_data
+  organization = "${var.github_organization}"
+}
+
 data "local_file" "github_token" {
   filename = pathexpand("${var.github_token_path}")
 }
 
 locals {
   github_token_data = trimspace("${data.local_file.github_token.content}")
-}
-
-provider "github" {
-  token        = local.github_token_data
-  organization = "${var.github_organization}"
 }
 
 ## -- cluster admin
@@ -48,21 +48,6 @@ module "https-certificates" {
   source      = "./modules/https-certificates"
   config_path = "${var.config_path}"
   env         = "${var.env}"
-}
-
-module "argo" {
-  source              = "./modules/argo"
-  config_path         = "${var.config_path}"
-  env                 = "${var.env}"
-  slack_secret_data   = "${var.slack_secret_data}"
-  github_organization = "${var.github_organization}"
-  github_token_path   = "${var.github_token_path}"
-}
-
-module "keel" {
-  source = "./modules/keel"
-  config_path         = "${var.config_path}"
-  env                 = "${var.env}"
 }
 
 module "backend-api" {
