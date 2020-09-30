@@ -5,11 +5,11 @@ provider "helm" {
 
 provider "github" {
   token        = local.github_token_data
-  organization = "${var.github_organization}"
+  organization = var.github_organization
 }
 
 data "local_file" "github_token" {
-  filename = pathexpand("${var.github_token_path}")
+  filename = pathexpand(var.github_token_path)
 }
 
 locals {
@@ -28,7 +28,7 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
   }
   subject {
     kind      = "User"
-    name      = "${var.gcloud_account}"
+    name      = var.gcloud_account
     api_group = "rbac.authorization.k8s.io"
   }
 }
@@ -36,26 +36,26 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
 
 module "storage-services" {
   source      = "./modules/storage-services"
-  config_path = "${var.config_path}"
-  env         = "${var.env}"
+  config_path = var.config_path
+  env         = var.env
 }
 
 module "https-certificates" {
   source      = "./modules/https-certificates"
-  config_path = "${var.config_path}"
-  env         = "${var.env}"
+  config_path = var.config_path
+  env         = var.env
 }
 
 module "backend-api" {
   source      = "./modules/backend-api"
-  config_path = "${var.config_path}"
-  env         = "${var.env}"
+  config_path = var.config_path
+  env         = var.env
 }
 
 module "frontend-app" {
   source      = "./modules/frontend-app"
-  config_path = "${var.config_path}"
-  env         = "${var.env}"
+  config_path = var.config_path
+  env         = var.env
 }
 
 
